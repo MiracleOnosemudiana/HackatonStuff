@@ -13,19 +13,41 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append("file", fileInputRef.current.files[0]);
-  
+
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
-  
+
       // The API response
       const data = await response.json();
       console.log(data); // Log the response from the API
     } catch (error) {
-      console.log("error ", error)
+      console.log("error ", error);
     }
- 
+  };
+
+  const serverUpload = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch("/api/uploadFromServer", {
+        method: "POST",
+        body: JSON.stringify({
+          filepath:
+            "/home/jamiebones/Coding_Directory/Arweave-Hacks/arweave-academia-hackathon/arweave-hackathon/uploads/pdf/Osikhena_Oshomah_Resume_28-03-2023-13-38-22.pdf",
+          metadata: [
+            { name: "Content-Type", value: "application/pdf" },
+            { name: "document-type", value: "cv" },
+          ],
+        }),
+      });
+
+      // The API response
+      const data = await response.json();
+      console.log(data); // Log the response from the API
+    } catch (error) {
+      console.log("error ", error);
+    }
   };
   return (
     <>
@@ -37,15 +59,11 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={styles.description}>
-          <form onSubmit={submitHandler}>
+          <form onSubmit={serverUpload}>
             <input type="file" ref={fileInputRef} />
             <button type="submit">Upload</button>
           </form>
-      
-        
         </div>
-
-    
       </main>
     </>
   );
