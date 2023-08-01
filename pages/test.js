@@ -101,9 +101,9 @@ export default function Home() {
 
               <p>file path : {filepath}</p>
 
-              <p>Author Name: {data["author's name"]}</p>
+              <p>Author Name: {data["author"]}</p>
 
-              <p>Journal Name: {data["journal name"]}</p>
+              <p>Journal Name: {data["journal_name"]}</p>
 
               <p>Paper Title: {data["title"]}</p>
 
@@ -111,12 +111,11 @@ export default function Home() {
 
               <p>Keywords: {data["keywords"]}</p>
 
-              {data["references"] && <p>References</p>}
+              <p>Publication Date: {data["publication_date"]}</p>
 
-              {data["references"] &&
-                data["references"].map((ref, index) => {
-                  return <p key={index}>{ref}</p>;
-                })}
+              
+
+           
             </div>
           )}
         </div>
