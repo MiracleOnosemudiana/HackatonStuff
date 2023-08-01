@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import { AiOutLineMenu, AiOutLineClose } from 'react-icons'
+// import { AiOutLineMenu, AiOutLineClose } from 'react-icons'
 
 
 const Navbar = () => {
