@@ -8,28 +8,30 @@ console.log("keys ", keys);
 export default async function handler(req, res) {
   const { pdfString, filePath, fields } = req.body;
   const wordsArray = pdfString.trim().split(/\s+/);
-  const first1000Words = wordsArray.slice(0, 1700);
-  const last1000Words = wordsArray.slice(-500);
-  let extractedpdfString = first1000Words.join(" ") + last1000Words.join(" ");
+  const first2000Words = wordsArray.slice(0, 2200);
+  //const last1000Words = wordsArray.slice(-500);
+  let extractedpdfString = first2000Words.join(" ");
+  console.log("words ", extractedpdfString)
   const prompt = `Your task is to take this string and indetify if the string is from an academic paper \n\n
   you are to analyze the string for the following patterns \\n
   Techncal and formal language \n
   complex ideas and arguments \n
   objective tone \n
   analytical perspective \n
-  presence of abstract and references \n
+  presence of abstract 
   
   If the document meets 50% of the listed pattern it is an academic document \n
   
-  If it is academic extract the journal name, abstract, keywords, title ,author's name and references in this format;
+  If it is academic extract the journal name, title, author, publication date, abstract and keywords in this format;
   
-  <p>journal name: extracted joiurnal name</p>
+  <p>journal_name: extracted journal name</p>
   <p>title: extrated title </p>;
-  <p>author's name: extracted Author's Name</p>;
-  <p>abstract: extracted Abstract</p>;
+  <p>author: extracted Author's Name</p>;
+  <p>abstract: extracted abstract should contain all the abstract </p>;
   <p>keywords: extracted keywords </p>;
-  <div>refrences: list all the extracted references and put each reference on a new line wrap with a <p>{reference}</p> tag</div>;
-  use exactly the given format above but if if the document is not academic say \n\n
+  <p>publication_date: publication date </p>;
+ 
+  use exactly the given format above .If the document is not academic say \n\n
   This is not an academic document. Here comes the string;
   
   ${extractedpdfString}
@@ -126,7 +128,7 @@ const filterResultToReturn = (resultData) => {
   } else {
     //splitting using <p> and <div> as delimiter
     const splitText = resultData
-      .split(/<p>|<\/p>|<div>|<\/div>/)
+      .split(/<p>|<\/p>/)
       .filter((item) => item.trim() !== "");
     console.log("split text ", splitText);
     let obj = {
@@ -134,32 +136,23 @@ const filterResultToReturn = (resultData) => {
       data: {},
     };
     for (let i = 0; i < splitText.length; i++) {
-      if (i < 5) {
+      // if (i < 5) {
         const item = splitText[i].split(":");
         obj["data"][item[0]] = item[1];
-      }
-      if (i > 5) {
-        const item = splitText[i];
-        if (obj["data"]["references"]) {
-          const array = obj["data"]["references"];
-          const newArray = [...array, item];
-          obj["data"]["references"] = newArray;
-        } else {
-          obj["data"]["references"] = [item];
-        }
-      }
+      //}
+      // if (i > 5) {
+      //   const item = splitText[i];
+      //   if (obj["data"]["references"]) {
+      //     const array = obj["data"]["references"];
+      //     const newArray = [...array, item];
+      //     obj["data"]["references"] = newArray;
+      //   } else {
+      //     obj["data"]["references"] = [item];
+      //   }
+      // }
     }
     return obj;
   }
 };
 
-{
-  /* <p>journal name: Nigerian Journal of Agriculture, Food and Environment</p>
-<p>title: Post Clean-Up Assessment of Crude Oil Polluted Soils of Ikot Ada Udo in Ikot Abasi Local Government Area of Akwa Ibom State</p>;
-<p>author's name: Samuel, E. A., Udoumoh, I. D. J., Uduak, I. G., Ukem, B. O., Sule, N. A., Robert, A. G.</p>;
-<p>abstract: Environmental pollution through oil spills has reportedly caused serious damage to both aquatic and terrestrial ecosystems, destruction of forests and farmlands and severely affects the characteristics and management of agricultural soils. The objectives of this study were to assess total petroleum hydrocarbon (TPH) and associated heavy metal levels in soils affected by the 2007 soil spillage at Ikot Ada Udo in Ikot Abasi Local Government Area following cleanup (August 2008 – March 2009).</p>;
-<p>keywords: post clean-up assessment, crude oil-polluted soils, soil characteristics, Ikot Abasi, Akwa Ibom State</p>;
-<div>refrences: 
-<p>Barakat, M. A., Abo-Aly, M. M., El-Desoky, H. S., Ghoneim, M. M., Awad, A. M., Arafa, A. A., & El-Morsi, A. A. (2016). Recovery of crude oil-impacted soil using combined treatment of biochar, earthworms and plants. Ecotoxicology and Environmental Safety, 133, 216-225.</p>
-<p>Chukwu, L. O., & Udoh, B. T. (2014). Effects of crude oil pollution on soil physico */
-}
+
