@@ -1,6 +1,7 @@
 import { createTransaction } from "arweavekit/transaction";
 import fs from "fs/promises";
 import { getAddress, getBalance } from "arweavekit/wallet";
+import fs from "fs";
 
 const { kty, n, e, d, p, q, dp, dq, qi } = process.env;
 
@@ -38,11 +39,11 @@ export default async function handler(req, res) {
       data: arrayBuffer,
       key: ARWEAVE_KEY,
       type: "data",
+      environment: "mainnet",
       options: {
         tags: metadata,
         signAndPost: true,
         useBundlr: true,
-        environment: "mainnet",
       },
     });
     const {
@@ -50,6 +51,7 @@ export default async function handler(req, res) {
     } = transaction;
     console.log("bundlr transaction ", postedTransaction);
     //1yrBOuzdI12yUAUa-Dtwzm3PQgkbpH1I1TR3JNUHsCk
+    fs.unlinkSync(filePath);
     res.status(200).json({ postedTransaction })
   } catch (error) {
     console.log("error ", error);
