@@ -47,9 +47,10 @@ const handler = async (req, res) => {
 
     const { data, error } = response.data;
     if (error) {
-      res.status(200).json({ data, error });
+      return res.status(200).json({ data, error });
     }
-    res.status(200).json({ data, error });
+    data.filepath = filepath;
+    return res.status(200).json({ data, error });
   } catch (error) {
     res.status(400).json({ error: error });
   }

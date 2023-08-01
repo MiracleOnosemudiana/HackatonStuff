@@ -1,5 +1,5 @@
 const axios = require("axios");
-import fs from "fs";
+
 
 const keys = [process.env.API_KEY1, process.env.API_KEY2, process.env.API_KEY3];
 
@@ -8,8 +8,8 @@ console.log("keys ", keys);
 export default async function handler(req, res) {
   const { pdfString, filePath, fields } = req.body;
   const wordsArray = pdfString.trim().split(/\s+/);
-  const first1000Words = wordsArray.slice(0, 1500);
-  const last1000Words = wordsArray.slice(-800);
+  const first1000Words = wordsArray.slice(0, 1700);
+  const last1000Words = wordsArray.slice(-500);
   let extractedpdfString = first1000Words.join(" ") + last1000Words.join(" ");
   const prompt = `Your task is to take this string and indetify if the string is from an academic paper \n\n
   you are to analyze the string for the following patterns \\n
@@ -29,8 +29,7 @@ export default async function handler(req, res) {
   <p>abstract: extracted Abstract</p>;
   <p>keywords: extracted keywords </p>;
   <div>refrences: list all the extracted references and put each reference on a new line wrap with a <p>{reference}</p> tag</div>;
-  
-  if the document is not academic say \n\n
+  use exactly the given format above but if if the document is not academic say \n\n
   This is not an academic document. Here comes the string;
   
   ${extractedpdfString}
@@ -38,7 +37,6 @@ export default async function handler(req, res) {
   const result = await useGPTchatSimple(prompt);
   const value = filterResultToReturn(result);
   console.log("filtered reult ", value);
-  fs.unlinkSync(filePath);
   res.status(200).json(value);
 }
 
@@ -130,6 +128,7 @@ const filterResultToReturn = (resultData) => {
     const splitText = resultData
       .split(/<p>|<\/p>|<div>|<\/div>/)
       .filter((item) => item.trim() !== "");
+    console.log("split text ", splitText);
     let obj = {
       error: null,
       data: {},
@@ -153,3 +152,14 @@ const filterResultToReturn = (resultData) => {
     return obj;
   }
 };
+
+{
+  /* <p>journal name: Nigerian Journal of Agriculture, Food and Environment</p>
+<p>title: Post Clean-Up Assessment of Crude Oil Polluted Soils of Ikot Ada Udo in Ikot Abasi Local Government Area of Akwa Ibom State</p>;
+<p>author's name: Samuel, E. A., Udoumoh, I. D. J., Uduak, I. G., Ukem, B. O., Sule, N. A., Robert, A. G.</p>;
+<p>abstract: Environmental pollution through oil spills has reportedly caused serious damage to both aquatic and terrestrial ecosystems, destruction of forests and farmlands and severely affects the characteristics and management of agricultural soils. The objectives of this study were to assess total petroleum hydrocarbon (TPH) and associated heavy metal levels in soils affected by the 2007 soil spillage at Ikot Ada Udo in Ikot Abasi Local Government Area following cleanup (August 2008 – March 2009).</p>;
+<p>keywords: post clean-up assessment, crude oil-polluted soils, soil characteristics, Ikot Abasi, Akwa Ibom State</p>;
+<div>refrences: 
+<p>Barakat, M. A., Abo-Aly, M. M., El-Desoky, H. S., Ghoneim, M. M., Awad, A. M., Arafa, A. A., & El-Morsi, A. A. (2016). Recovery of crude oil-impacted soil using combined treatment of biochar, earthworms and plants. Ecotoxicology and Environmental Safety, 133, 216-225.</p>
+<p>Chukwu, L. O., & Udoh, B. T. (2014). Effects of crude oil pollution on soil physico */
+}
