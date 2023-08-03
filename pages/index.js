@@ -20,8 +20,7 @@ export default function Home() {
         heading="Academic Paper Hub"
         message=" store your academic paper on the permaweb and get rewarded by your audience"
       />
-
-      <h1>HOME PAGE</h1>
+      {/* <h1>HOME PAGE</h1> */}
     </>
   );
 }
