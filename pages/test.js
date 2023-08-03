@@ -2,6 +2,8 @@ import Head from "next/head";
 import { Inter } from "next/font/google";
 import React, { useState } from "react";
 import styles from "@/styles/Home.module.css";
+import BundlrUploader from "../components/BundlerUploader";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +20,7 @@ export default function Home() {
       setLoading(!loading);
       setFilepath("");
       setData(null);
-      setError(null)
+      setError(null);
       const formData = new FormData();
       formData.append("file", fileInputRef.current.files[0]);
 
@@ -83,13 +85,16 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={styles.description}>
+     
+          <BundlrUploader />
+
           {loading && <p>Please Wait.........</p>}
 
           {error && <p>Error: {error}</p>}
-          <form onSubmit={submitHandler}>
+          {/* <form onSubmit={serverUpload}>
             <input type="file" ref={fileInputRef} />
             <button type="submit">Upload Academic Paper</button>
-          </form>
+          </form> */}
 
           {data && (
             <div>
@@ -112,10 +117,6 @@ export default function Home() {
               <p>Keywords: {data["keywords"]}</p>
 
               <p>Publication Date: {data["publication_date"]}</p>
-
-              
-
-           
             </div>
           )}
         </div>
